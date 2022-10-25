@@ -1,4 +1,3 @@
-from itertools import count
 from docsx import *
 import math
 
@@ -6,49 +5,49 @@ import math
 class VecComp:
     def magnitude(self, concordance):
         if type(concordance) != dict:
-            raise ValueError("Supplied argument is not a dictionary")
+            raise ValueError('Supplied Argument should be of type dict')
         total = 0
-        for w, c in concordance.items():
-            total += c ** 2
+        for word, count in concordance.items():
+            total += count ** 2
         return math.sqrt(total)
 
-    def relation(self, con1, con2):
-        if type(con1) != dict:
-            raise ValueError("Supplied argument is not a dictionary")
-        if type(con2) != dict:
-            raise ValueError("Supplied argument is not a dictionary")
-        relevance = 0
-        topval = 0
-        for w, c in con1.items():
-            if w in con2:
-                topval += c * con2[w]
-            if (self.magnitude(con1) * self.magnitude(con2)) != 0:
-                return topval/self.magnitude(con1) * self.magnitude(con2)
-            else:
-                return 0
+    def relation(self, concordance1, concordance2):
+        if type(concordance1) != dict:
+            raise ValueError('Supplied Argument 1 should be of type dict')
+        if type(concordance2) != dict:
+            raise ValueError('Supplied Argument 2 should be of type dict')
+        # relevance = 0
+        topvalue = 0
+        for word, count in concordance1.items():
+            if word in concordance2.keys():
+                topvalue += count * concordance2[word]
+        if (self.magnitude(concordance1) * self.magnitude(concordance2)) != 0:
+            return topvalue / (self.magnitude(concordance1) * self.magnitude(concordance2))
+        else:
+            return 0
 
-    def concordance(self, doc):
-        if type(doc) != str:
-            raise ValueError("Supplied argument is not a string")
+    def concordance(self, document):
+        if type(document) != str:
+            raise ValueError('Supplied Argument should be of type string')
         con = {}
-        for w in doc.split(' '):
-            if w in con:
-                con[w] = con[w]+1
+        for word in document.split(' '):
+            if word in con.keys():
+                con[word] = con[word] + 1
             else:
-                con[w] = 1
+                con[word] = 1
         return con
 
 
 v = VecComp()
 
 index = {
-    0: v.concordance(documents[0].lower()),
-    1: v.concordance(documents[1].lower()),
-    2: v.concordance(documents[2].lower()),
-    3: v.concordance(documents[3].lower()),
-    4: v.concordance(documents[4].lower()),
-    5: v.concordance(documents[5].lower()),
-    6: v.concordance(documents[6].lower()),
+    0: v.concordance(docx[0].lower()),
+    1: v.concordance(docx[1].lower()),
+    2: v.concordance(docx[2].lower()),
+    3: v.concordance(docx[3].lower()),
+    4: v.concordance(docx[4].lower()),
+    5: v.concordance(docx[5].lower()),
+    6: v.concordance(docx[6].lower()),
 }
 
 searchterm = input('Enter Search Term: ')
@@ -58,7 +57,7 @@ matches = []
 for i in range(len(index)):
     relation = v.relation(v.concordance(searchterm.lower()), index[i])
     if relation != 0:
-        matches.append((relation, documents[i][:100]))
+        matches.append((relation, docx[i][:100]))
 
 matches.sort(reverse=True)
 
